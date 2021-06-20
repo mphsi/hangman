@@ -8,7 +8,9 @@ module Rangman
     attr_reader :word_letters
 
     def initialize(word = nil)
-      @word = word || select_randomized_word
+      raise Rangman::MissingWordError if word.nil?
+
+      @word = word
       @word_letters = hidden_word_letters
     end
 
@@ -30,10 +32,6 @@ module Rangman
     end
 
     private
-
-    def select_randomized_word
-      Words.sample
-    end
 
     def hidden_word_letters
       [HIDDEN_LETTER_CHAR] * @word.size

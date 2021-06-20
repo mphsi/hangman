@@ -3,13 +3,23 @@
 require 'rangman'
 
 RSpec.describe Rangman::Lives do
-  subject(:lives) { described_class.new }
+  subject(:lives) { described_class.new(starting_lives) }
 
-  let(:default_lives) { described_class::DEFAULT_LIVES }
+  let(:starting_lives) { 6 }
+
+  describe 'initialization' do
+    context 'when lives is outside of the min and max range' do
+      let(:starting_lives) { 8 }
+
+      it 'raises and error' do
+        expect { lives }.to raise_error(Rangman::InvalidLivesError)
+      end
+    end
+  end
 
   describe '#remaining' do
     it 'returns an int for the number of remaining lives' do
-      expect(lives.remaining).to eq(default_lives)
+      expect(lives.remaining).to eq(starting_lives)
     end
   end
 

@@ -3,13 +3,30 @@
 require 'rangman'
 
 RSpec.describe Rangman::Game do
-  subject(:game) { described_class.new(game_input, game_output, game_word) }
+  subject(:game) { described_class.new(options, game_input, game_output) }
 
   let(:game_input) { StringIO.new(format_guesses(player_guesses)) }
   let(:game_output) { StringIO.new }
   let(:player_guesses) { %w[d o g] }
+  let(:options) do
+    {
+      word: game_word,
+      render_guesses: render_guesses
+    }
+  end
 
   let(:game_word) { 'dog' }
+  let(:render_guesses) { nil }
+
+  describe 'initialization' do
+    context 'when initialization options are not valid' do
+      let(:options) { { word: nil, lives: 99, render_guesses: 'a' } }
+
+      it 'raises an error' do
+        expect { game }.to raise_error(Rangman::InvalidOptions)
+      end
+    end
+  end
 
   describe '#start' do
     it 'outputs a welcoming message' do
@@ -31,6 +48,21 @@ RSpec.describe Rangman::Game do
         game.start
 
         expect(game_output.string).to include("Guess this word: #{hidden_game_word.join(' ')}")
+      end
+
+      context 'when render_guesses rule is enabled' do
+        let(:player_guesses) { %w[m a m m u t h] }
+
+        it 'outputs the player guesses' do
+          game.start
+
+          expect(game_output.string).to include('Your guesses are: ["m"]')
+          expect(game_output.string).to include('Your guesses are: ["m", "a"]')
+          expect(game_output.string).to include('Your guesses are: ["m", "a"]')
+          expect(game_output.string).to include('Your guesses are: ["m", "a"]')
+          expect(game_output.string).to include('Your guesses are: ["m", "a", "u"]')
+          expect(game_output.string).to include('Your guesses are: ["m", "a", "u", "t"]')
+        end
       end
 
       it 'asks the player for a guess' do

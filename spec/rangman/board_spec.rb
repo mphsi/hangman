@@ -8,6 +8,16 @@ RSpec.describe Rangman::Board do
   let(:word) { 'dog' }
   let(:hidden_letter_char) { described_class::HIDDEN_LETTER_CHAR }
 
+  describe 'initialization' do
+    context 'when game word is nil' do
+      let(:word) { nil }
+
+      it 'raises an error' do
+        expect { board }.to raise_error(Rangman::MissingWordError)
+      end
+    end
+  end
+
   describe '#word_letters' do
     it 'returns an array with the word letters hidden' do
       word_letters_hidden = word.chars.map { hidden_letter_char }

@@ -1,5 +1,36 @@
 #! usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
 require 'rangman'
-Rangman::Game.new.start
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: rangman [options]'
+
+  opts.on('-w', '--word WORD', 'Game word') do |word|
+    options[:word] = word
+  end
+
+  opts.on('-l', '--lives [LIVES]', Integer, 'Game number of lives. 7 by default') do |lives|
+    unless (1..10).include? lives
+      puts 'Lives must be an integer between 1 and 10'
+      exit
+    end
+
+    options.lives lives
+  end
+
+  opts.on('--[no-]render-guesses', 'Whether to render a list of previous guesses. ',
+          'Rendered by default') do |render_guesses|
+    options.render_guesses = render_guesses
+  end
+
+  opts.on('-h', '--help', 'Print this message') do
+    puts opts
+    exit
+  end
+end.parse!
+
+Rangman::Game.new(options).start

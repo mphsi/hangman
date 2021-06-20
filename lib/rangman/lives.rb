@@ -3,11 +3,14 @@
 module Rangman
   # Game Lives wrapper
   class Lives
-    DEFAULT_LIVES = 7
+    MIN_LIVES = 1
+    MAX_LIVES = 7
 
     attr_reader :lives
 
-    def initialize(lives = DEFAULT_LIVES)
+    def initialize(lives)
+      raise Rangman::InvalidLivesError unless lives_within_range?(lives)
+
       @lives = lives
     end
 
@@ -21,6 +24,12 @@ module Rangman
 
     def decrease
       @lives -= 1
+    end
+
+    private
+
+    def lives_within_range?(lives)
+      (MIN_LIVES..MAX_LIVES).include? lives
     end
   end
 end

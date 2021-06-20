@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/mphsi/rangman'
   spec.license       = 'MIT'
   spec.files         = Dir['lib/**/*']
+  spec.executables   = ['rangman']
 
   spec.required_ruby_version = Gem::Requirement.new('>= 2.4.0')
 

@@ -3,7 +3,7 @@
 require 'rangman'
 
 RSpec.describe Rangman::Game do
-  subject(:game) { described_class.new(game_input, game_output) }
+  subject(:game) { described_class.new(game_input, game_output, game_word) }
 
   let(:game_input) { StringIO.new(format_guesses(player_guesses)) }
   let(:game_output) { StringIO.new }
@@ -12,24 +12,34 @@ RSpec.describe Rangman::Game do
   let(:game_word) { 'dog' }
 
   describe '#start' do
-    before do
-      allow(Rangman::Words).to receive(:sample).and_return(game_word)
-    end
-
-    it 'outputs the game word' do
-      hidden_game_word = game_word.chars.map { '_' }
-
+    it 'outputs a welcoming message' do
       game.start
 
-      expect(game_output.string).to include("Guess this word: #{hidden_game_word.join(' ')}")
+      expect(game_output.string).to include('Welcome to Rangman!')
     end
 
-    it 'asks the player for a guess' do
-      allow(game_input).to receive(:gets).and_return("x\n")
+    describe 'each turn' do
+      it 'outputs the number of remaining lifes' do
+        game.start
 
-      game.start
+        expect(game_output.string).to include("You have 7 remaining lives.")
+      end
 
-      expect(game_output.string).to include('Please guess a letter: ')
+      it 'outputs the game word' do
+        hidden_game_word = game_word.chars.map { '_' }
+
+        game.start
+
+        expect(game_output.string).to include("Guess this word: #{hidden_game_word.join(' ')}")
+      end
+
+      it 'asks the player for a guess' do
+        allow(game_input).to receive(:gets).and_return("x\n")
+
+        game.start
+
+        expect(game_output.string).to include('Please guess a letter: ')
+      end
     end
 
     context 'when the player loses all its lives before guessing the word' do

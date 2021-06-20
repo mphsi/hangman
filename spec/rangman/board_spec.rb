@@ -6,61 +6,56 @@ RSpec.describe Rangman::Board do
   subject(:board) { described_class.new(word) }
 
   let(:word) { 'dog' }
+  let(:hidden_letter_char) { described_class::HIDDEN_LETTER_CHAR }
 
-  describe '#state' do
-    it 'returns each word letter joined by one space, with unguessed letters covered with "_"' do
-      expect(board.state).to eq('_ _ _')
-    end
+  describe '#word_letters' do
+    it 'returns an array with the word letters hidden' do
+      word_letters_hidden = word.chars.map { hidden_letter_char }
 
-    context 'when a letters have been guessed' do
-      before { board.reveal_character('d') }
-
-      it 'reveals the guessed letters' do
-        expect(board.state).to eq('d _ _')
-      end
+      expect(board.word_letters).to eq(word_letters_hidden)
     end
   end
 
-  describe '#incomplete?' do
-    context 'when all word letters have been guessed' do
-      before do
-        %w[d o g].each { |letter| board.reveal_character(letter) }
-      end
-
-      it 'returns false' do
-        expect(board.incomplete?).to eq(false)
-      end
-    end
-
-    context 'when at least one letter remains to be guessed' do
-      before do
-        %w[d o].each { |letter| board.reveal_character(letter) }
-      end
-
-      it 'returns true' do
-        expect(board.incomplete?).to eq(true)
-      end
-    end
-  end
-
-  describe '#reveal_character' do
+  describe '#reveal_letter' do
     context 'when the letter exists in word' do
       it 'returns true' do
-        expect(board.reveal_character('d')).to eq(true)
+        expect(board.reveal_letter('d')).to eq(true)
       end
 
       it 'reveals the letter in the board' do
-        expect { board.reveal_character('d') }.to change { board.state }.to('d _ _')
+        expect { board.reveal_letter('d') }.to change { board.word_letters }.to(%w[d _ _])
       end
     end
 
     context 'when the letter does not exists in word' do
       it 'returns false' do
-        expect(board.reveal_character('c')).to eq(false)
+        expect(board.reveal_letter('c')).to eq(false)
       end
 
       it 'does not reveals any letter' do
-        expect { board.reveal_character('c') }.not_to change { board.state }
+        expect { board.reveal_letter('c') }.not_to change { board.word_letters }
+      end
+    end
+  end
+
+  describe '#revealed?' do
+    context 'when all word letters have been guessed' do
+      before do
+        %w[d o g].each { |letter| board.reveal_letter(letter) }
+      end
+
+      it 'returns true' do
+        expect(board.revealed?).to eq(true)
+      end
+    end
+
+    context 'when at least one letter remains hidden' do
+      before do
+        %w[d o].each { |letter| board.reveal_letter(letter) }
+      end
+
+      it 'returns false' do
+        expect(board.revealed?).to eq(false)
       end
     end
   end

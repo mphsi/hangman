@@ -3,33 +3,40 @@
 module Rangman
   # Game Board wrapper. It requires a Game Word to already be defined
   class Board
-    UNGUESSED_CHAR = '_'
+    HIDDEN_LETTER_CHAR = '_'
 
-    def initialize(word)
-      @word  = word
-      @board = [UNGUESSED_CHAR] * word.size
+    attr_reader :word_letters
+
+    def initialize(word = nil)
+      @word = word || select_randomized_word
+      @word_letters = hidden_word_letters
     end
 
-    def state
-      @board.join(' ')
-    end
-
-    def incomplete?
-      @board.include?(UNGUESSED_CHAR)
-    end
-
-    # Returns a Boolean to let know caller if argument was a correct guess
-    def reveal_character(guess)
-      guess_included = false
+    def reveal_letter(letter)
+      letter_included = false
 
       @word.chars.each_with_index do |character, index|
-        if guess.downcase == character.downcase
-          @board[index]  = character
-          guess_included = true
+        if letter.downcase == character.downcase
+          word_letters[index] = character
+          letter_included = true
         end
       end
 
-      guess_included
+      letter_included
+    end
+
+    def revealed?
+      !word_letters.include?(HIDDEN_LETTER_CHAR)
+    end
+
+    private
+
+    def select_randomized_word
+      Words.sample
+    end
+
+    def hidden_word_letters
+      [HIDDEN_LETTER_CHAR] * @word.size
     end
   end
 end

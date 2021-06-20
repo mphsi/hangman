@@ -5,21 +5,11 @@ require 'rangman'
 RSpec.describe Rangman::Lives do
   subject(:lives) { described_class.new }
 
-  describe '#state' do
-    let(:remaining_lives) { described_class::DEFAULT_LIVES.to_s }
+  let(:default_lives) { described_class::DEFAULT_LIVES }
 
-    it 'returns a String including the number of remaining lives' do
-      expect(lives.state).to include(remaining_lives)
-    end
-
-    context 'when the number of lives decreases' do
-      before { lives.decrease }
-
-      let(:remaining_lives) { (described_class::DEFAULT_LIVES - 1).to_s }
-
-      it 'includes the updated number of remaining lives' do
-        expect(lives.state).to include(remaining_lives)
-      end
+  describe '#remaining' do
+    it 'returns an int for the number of remaining lives' do
+      expect(lives.remaining).to eq(default_lives)
     end
   end
 
@@ -40,8 +30,8 @@ RSpec.describe Rangman::Lives do
   end
 
   describe '#decrease' do
-    it 'decreases the number of lives by 1' do
-      expect { lives.decrease }.to change { lives.lives }
+    it 'decreases the number of remaining lives by 1' do
+      expect { lives.decrease }.to change { lives.remaining }.by(-1)
     end
   end
 end

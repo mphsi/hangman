@@ -5,12 +5,10 @@ module Rangman
   class Lives
     DEFAULT_LIVES = 7
 
+    attr_reader :lives
+
     def initialize(lives = DEFAULT_LIVES)
       @lives = lives
-    end
-
-    def state
-      "You have #{@lives} remaining lives."
     end
 
     def remaining?

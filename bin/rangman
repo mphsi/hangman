@@ -19,12 +19,12 @@ OptionParser.new do |opts|
       exit
     end
 
-    options.lives lives
+    options[:lives] = lives
   end
 
   opts.on('--[no-]render-guesses', 'Whether to render a list of previous guesses. ',
           'Rendered by default') do |render_guesses|
-    options.render_guesses = render_guesses
+    options[:render_guesses] = render_guesses
   end
 
   opts.on('-h', '--help', 'Print this message') do
